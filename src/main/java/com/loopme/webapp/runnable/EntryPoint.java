@@ -1,10 +1,15 @@
 package com.loopme.webapp.runnable;
 
+import com.github.fakemongo.Fongo;
 import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.GuiceServletContextListener;
+import com.loopme.webapp.modules.BaseModule;
+import com.loopme.webapp.modules.MongoDataBaseModule;
+import com.loopme.webapp.modules.SqlDataBaseModule;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -31,11 +36,9 @@ public class EntryPoint {
         Properties props = loadProps(CONFIGURATION_FILE_NAME);
         int port = Integer.valueOf(props.getProperty(SERVER_PORT));
 
-        Server server = new Server(port);
+        Module dataBaseModule = createDataBaseModule("sql", props);
 
-        final DataSource dataSource = createDataSource(props);
-        warmConnection(dataSource);
-        Preconditions.checkNotNull(dataSource, "DataSource is Null. App couldn't be run without it");
+        Server server = new Server(port);
 
         // tell jetty to ask Guice about what servlet should handle the requests
         ServletContextHandler context = new ServletContextHandler(
@@ -44,7 +47,7 @@ public class EntryPoint {
         context.addEventListener(new GuiceServletContextListener() {
             @Override
             protected Injector getInjector() {
-                return Guice.createInjector(new AppInjector(dataSource));
+                return Guice.createInjector(new BaseModule(), dataBaseModule);
             }
         });
         context.addFilter(GuiceFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC));
@@ -62,8 +65,20 @@ public class EntryPoint {
         }
     }
 
-    private static void warmConnection(DataSource dataSource) {
+    private static Module createDataBaseModule(String sql,Properties props) {
+        switch (sql) {
+            case "sql":
+                final DataSource dataSource = createDataSource(props);
+                Preconditions.checkNotNull(dataSource, "DataSource is Null. App couldn't be run without it");
 
+                return new SqlDataBaseModule(dataSource);
+
+            case "nosql":
+                Fongo fongo = new Fongo("mongo fake server");
+                return new MongoDataBaseModule(fongo.getDB("fongoname"));
+            default:
+                throw new IllegalArgumentException("Module type not Supported");
+        }
     }
 
     private static Properties loadProps(String path) throws Exception {

@@ -1,32 +1,25 @@
-package com.loopme.webapp.runnable;
+package com.loopme.webapp.modules;
 
-import com.google.common.base.Throwables;
 import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
-import com.loopme.webapp.dao.AppDao;
-import com.loopme.webapp.dao.JdbcAppDao;
 import com.loopme.webapp.restfull.EndPoint;
 import com.loopme.webapp.services.AppService;
 import com.loopme.webapp.services.AppServiceImpl;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
-import javax.sql.DataSource;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Volodymyr Dema. Will see.
  */
-public class AppInjector extends ServletModule {
-    private final DataSource dataSource;
+public class BaseModule extends ServletModule {
 
-    AppInjector(DataSource dataSource) {
+    public BaseModule() {
         super();
-        this.dataSource = dataSource;
     }
 
     @Override
@@ -36,17 +29,7 @@ public class AppInjector extends ServletModule {
         bind(MessageBodyReader.class).to(JacksonJsonProvider.class);
         bind(MessageBodyWriter.class).to(JacksonJsonProvider.class);
 
-        bind(AppDao.class).toInstance(new JdbcAppDao());
         bind(AppService.class).toInstance(new AppServiceImpl());
-
-        bind(Connection.class).toProvider(() -> {
-            try {
-                return dataSource.getConnection();
-            } catch (Exception e) {
-                Throwables.propagate(e);
-                return null;
-            }
-        });
 
         Map<String, String> options = new HashMap<>();
         options.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
