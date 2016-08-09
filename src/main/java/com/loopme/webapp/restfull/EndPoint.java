@@ -22,14 +22,7 @@ public class EndPoint {
     @Inject
     private AppService service;
 
-    @GET
-    @Produces("text/plain")
-    public String getAdvertise () {
-        return "happened";
-    }
-
     @POST
-    @Path("/post")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public AdvertiseBunch echo(AdvertiseRequestEvent request) {

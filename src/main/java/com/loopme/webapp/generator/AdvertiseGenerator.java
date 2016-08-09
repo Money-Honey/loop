@@ -1,6 +1,7 @@
 package com.loopme.webapp.generator;
 
 import com.google.common.collect.Lists;
+import com.loopme.webapp.dto.Advertise;
 import com.mongodb.BasicDBObject;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class AdvertiseGenerator {
             "android", "ios", "windows 10 mobile", "blackberry 10", "firefox os", "tizen"
     );
 
-    public List<BasicDBObject> generateRecords(int count) {
-        List<BasicDBObject> records = Lists.newArrayList();
+    public List<AdvertiseDbObject> generateRecords(int count) {
+        List<AdvertiseDbObject> records = Lists.newArrayList();
 
         IntStream.range(1, count).forEach(
                 id -> records.add(generateRecord(id))
@@ -30,11 +31,12 @@ public class AdvertiseGenerator {
         return records;
     }
 
-    public BasicDBObject generateRecord(int id) {
-        BasicDBObject record = new BasicDBObject()
-                .append("id", id)
-                .append("description", "funny ads")
-                .append("url", "http://google.com");
+    public AdvertiseDbObject generateRecord(int id) {
+        AdvertiseDbObject record = new AdvertiseDbObject();
+
+        record.setId(id);
+        record.setDescription("funny ads");
+        record.setUrl("http://google.com");
 
         Random rnd = new Random();
 
@@ -54,10 +56,10 @@ public class AdvertiseGenerator {
         String excludeOs = operationSystems.get(rnd.nextInt(simpleAdjust(operationSystems.size())));
         String excludeCountries = countries.get(rnd.nextInt(simpleAdjust(countries.size())));
 
-        record.put("os", operationSystems);
-        record.put("countries", countries);
-        record.put("excluded_os", new String[]{excludeOs});
-        record.put("excluded_countries", new String[]{excludeCountries});
+        record.setOs(operationSystems);
+        record.setCountries(countries);
+        record.setExcludedOs(Lists.newArrayList(excludeOs));
+        record.setExcludedCountries(Lists.newArrayList(excludeCountries));
 
         return record;
     }

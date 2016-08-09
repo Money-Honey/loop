@@ -3,12 +3,14 @@ package com.loopme.webapp.dao.impl;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.loopme.webapp.dao.DbInitializer;
+import com.loopme.webapp.generator.AdvertiseDbObject;
 import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Volodymyr Dema. Will see.
@@ -27,9 +29,14 @@ public class MongoDbWarmInitializer implements DbInitializer {
     public void warmDb() {
         DBCollection dbCollection = collectionProvider.get();
 
-        List<BasicDBObject> records = generator.generateRecords(5);
-        dbCollection.insert(records);
+        List<AdvertiseDbObject> records = generator.generateRecords(2);
 
-        Log.info("Db warmed. Records: " + records);
+        List<BasicDBObject> dbObjects = records.stream()
+                .map(record -> record.toJson())
+                .collect(Collectors.toList());
+
+        dbCollection.insert(dbObjects);
+
+        Log.info("Db warmed. Records: " + dbObjects);
     }
 }

@@ -6,10 +6,7 @@ import com.google.inject.Provider;
 import com.loopme.webapp.dao.AppDao;
 import com.loopme.webapp.dto.Advertise;
 import com.loopme.webapp.dto.AdvertiseRequestEvent;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -28,22 +25,70 @@ public class MongoAppDao implements AppDao {
     public List<Advertise> retrieveAdvertises(AdvertiseRequestEvent event) {
         Log.info("Request: " + event);
 
-        List<Advertise> ads = Lists.newArrayList();
+        List<Advertise> records = Lists.newArrayList();
 
         DBCollection collection = connectionProvider.get();
 
-        BasicDBObject query = new BasicDBObject();
-        List<BasicDBObject> queryObj = Lists.newArrayList();
-        queryObj.add(new BasicDBObject("os", event.getOs()));
-        queryObj.add(new BasicDBObject("country", event.getCountry()));
-        query.put("$and", queryObj);
+        BasicDBObject query = createComplexQuery(event);
+//        BasicDBObject query = createComplex2Query(event);
+        Log.info("Querry: " + query.toString());
 
-
-        DBCursor cursor = collection.find(query);
-        while (cursor.hasNext()) {
-            ads.add((Advertise)cursor.next());
+        try (DBCursor cursor = collection.find(query).limit(event.getLimit())) {
+            while (cursor.hasNext()) records.add(new Advertise().fromJson((BasicDBObject)cursor.next()));
         }
 
-        return ads;
+        Log.info("Return: " + records);
+
+        return records;
+    }
+
+    private BasicDBObject createComplexQuery(AdvertiseRequestEvent event) {
+
+        BasicDBObject queryFind = new BasicDBObject();
+        queryFind.put("countries", event.getCountry());
+        queryFind.put("os", event.getOs());
+
+        BasicDBObject exclusiveQuery = new BasicDBObject();
+        exclusiveQuery.put("excluded_countries", new BasicDBObject("$ne", event.getCountry()));
+        exclusiveQuery.put("excluded_os", new BasicDBObject("$ne", event.getOs()));
+
+        BasicDBObject andQuery = new BasicDBObject();
+        List<BasicDBObject> obj = Lists.newArrayList();
+        obj.add(queryFind);
+        obj.add(exclusiveQuery);
+        andQuery.put("$and", obj);
+
+        return andQuery;
+    }
+
+    private BasicDBObject createComplex2Query(AdvertiseRequestEvent event) {
+
+        BasicDBObject queryFind = new BasicDBObject();
+        queryFind.put("countries", event.getCountry());
+        queryFind.put("os", event.getOs());
+
+        BasicDBObject exclusiveQuery = new BasicDBObject();
+        BasicDBList orCountry = new BasicDBList();
+        orCountry.put("$exists", "false");
+        orCountry.put("$ne", event.getCountry());
+
+        exclusiveQuery.put("$or", orCountry);
+
+        BasicDBList orOs = new BasicDBList();
+        orCountry.put("$exists", "false");
+        orCountry.put("$ne", event.getOs());
+
+        exclusiveQuery.put("$or", orOs);
+
+
+//        exclusiveQuery.put("excluded_os", new BasicDBObject("$ne", event.getOs()));
+
+        BasicDBObject andQuery = new BasicDBObject();
+        List<BasicDBObject> obj = Lists.newArrayList();
+        obj.add(queryFind);
+        obj.add(exclusiveQuery);
+        andQuery.put("$and", obj);
+
+        return andQuery;
     }
 }
