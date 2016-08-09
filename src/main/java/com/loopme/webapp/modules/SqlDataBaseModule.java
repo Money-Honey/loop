@@ -4,7 +4,10 @@ import com.google.common.base.Throwables;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.loopme.webapp.dao.AppDao;
-import com.loopme.webapp.dao.JdbcAppDao;
+import com.loopme.webapp.dao.DbInitializer;
+import com.loopme.webapp.dao.impl.JdbcAppDao;
+import com.loopme.webapp.dao.impl.MongoDbWarmInitializer;
+import com.loopme.webapp.dao.impl.SqlWarmInitializer;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -22,7 +25,7 @@ public class SqlDataBaseModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-
+        binder.bind(DbInitializer.class).toInstance(new SqlWarmInitializer());
         binder.bind(AppDao.class).toInstance(new JdbcAppDao());
         binder.bind(Connection.class).toProvider(() -> {
             try {
@@ -32,6 +35,5 @@ public class SqlDataBaseModule implements Module {
                 return null;
             }
         });
-
     }
 }

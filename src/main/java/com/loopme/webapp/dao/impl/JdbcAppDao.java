@@ -1,9 +1,10 @@
-package com.loopme.webapp.dao;
+package com.loopme.webapp.dao.impl;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.loopme.webapp.dao.AppDao;
 import com.loopme.webapp.dto.Advertise;
 import com.loopme.webapp.dto.AdvertiseRequestEvent;
 import org.apache.log4j.Logger;

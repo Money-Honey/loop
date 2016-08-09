@@ -25,6 +25,7 @@
         <servlet-api.version>3.1.0</servlet-api.version>
         <junit.version>4.12</junit.version>
         <fongo.version>2.0.7</fongo.version>
+        <mongo.version>3.3.0</mongo.version>
 
         <!-- app params -->
         <server.port>8081</server.port>
@@ -186,6 +187,12 @@
             <groupId>com.github.fakemongo</groupId>
             <artifactId>fongo</artifactId>
             <version>${fongo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${mongo.version}</version>
         </dependency>
 
     </dependencies>
