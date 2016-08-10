@@ -1,4 +1,4 @@
-package com.loopme.webapp.generator;
+package com.loopme.webapp.model;
 
 import com.mongodb.BasicDBObject;
 

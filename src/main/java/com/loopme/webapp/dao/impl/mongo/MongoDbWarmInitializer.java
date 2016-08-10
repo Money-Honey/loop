@@ -1,9 +1,9 @@
-package com.loopme.webapp.dao.impl;
+package com.loopme.webapp.dao.impl.mongo;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.loopme.webapp.dao.DbInitializer;
-import com.loopme.webapp.generator.AdvertiseDbObject;
+import com.loopme.webapp.model.AdvertiseDbObject;
 import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;

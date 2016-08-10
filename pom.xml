@@ -194,7 +194,6 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongo.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

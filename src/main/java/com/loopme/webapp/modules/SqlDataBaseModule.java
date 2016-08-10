@@ -5,9 +5,8 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.loopme.webapp.dao.AppDao;
 import com.loopme.webapp.dao.DbInitializer;
-import com.loopme.webapp.dao.impl.JdbcAppDao;
-import com.loopme.webapp.dao.impl.MongoDbWarmInitializer;
-import com.loopme.webapp.dao.impl.SqlWarmInitializer;
+import com.loopme.webapp.dao.impl.sql.JdbcAppDao;
+import com.loopme.webapp.dao.impl.sql.SqlWarmInitializer;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

@@ -7,8 +7,9 @@ import com.google.inject.Provider;
 import com.loopme.webapp.dao.AppDao;
 import com.loopme.webapp.dto.Advertise;
 import com.loopme.webapp.dto.AdvertiseRequestEvent;
-import com.loopme.webapp.generator.AdvertiseDbObject;
 import com.loopme.webapp.generator.AdvertiseGenerator;
+import com.loopme.webapp.model.AdvertiseDbObject;
+import com.loopme.webapp.modules.CachModule;
 import com.loopme.webapp.modules.MongoDataBaseModule;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -20,7 +21,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Volodymyr Dema. Will see.
@@ -36,7 +36,7 @@ public class JsonCreateTest {
     @BeforeClass
     public static void init() {
         Fongo fongo = new Fongo("mongo fake server");
-        Injector injector = Guice.createInjector(new MongoDataBaseModule(fongo.getDB("fongoname")));
+        Injector injector = Guice.createInjector(new MongoDataBaseModule(fongo.getDB("fongoname")), new CachModule(true));
 
         dao = injector.getInstance(AppDao.class);
         collectionProvider = injector.getProvider(DBCollection.class);
@@ -50,6 +50,7 @@ public class JsonCreateTest {
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithoutExclusions() {
         AdvertiseDbObject record = generator.generateRecord(1);
+
         String os = record.getOs().get(0);
         String country = record.getCountries().get(0);
 
@@ -58,16 +59,18 @@ public class JsonCreateTest {
 
         AdvertiseRequestEvent event = new AdvertiseRequestEvent(country, os, 4);
 
+        showDetails(record, event);
+
+        collectionProvider.get().insert(record.toJson());
+        List<Advertise> advertises = dao.retrieveAdvertises(event);
+
+        assertThat(advertises, hasSize(1));
+    }
+
+    private void showDetails(AdvertiseDbObject record, AdvertiseRequestEvent event) {
         log("To insert: " + record);
         log("To insert Json: " + record.toJson());
         log("Send requestEvent: " + event);
-
-        collectionProvider.get().insert(record.toJson());
-
-        List<Advertise> advertises = dao.retrieveAdvertises(event);
-
-        log(advertises);
-        assertThat(advertises, hasSize(1));
     }
 
     @Test
@@ -82,15 +85,11 @@ public class JsonCreateTest {
 
         AdvertiseRequestEvent event = new AdvertiseRequestEvent(country, os, 4);
 
-        log("To insert: " + record);
-        log("To insert Json: " + record.toJson());
-        log("Send requestEvent: " + event);
+        showDetails(record, event);
 
         collectionProvider.get().insert(record.toJson());
-
         List<Advertise> advertises = dao.retrieveAdvertises(event);
 
-        log(advertises);
         assertThat(advertises, hasSize(0));
     }
 
@@ -106,20 +105,16 @@ public class JsonCreateTest {
 
         AdvertiseRequestEvent event = new AdvertiseRequestEvent(country, os, 4);
 
-        log("To insert: " + record);
-        log("To insert Json: " + record.toJson());
-        log("Send requestEvent: " + event);
+        showDetails(record, event);
 
         collectionProvider.get().insert(record.toJson());
-
         List<Advertise> advertises = dao.retrieveAdvertises(event);
 
-        log(advertises);
         assertThat(advertises, hasSize(1));
     }
 
     @Test
-    public void insertRecordsWithoutExclusionWithCommonOsCountryAndTheResultShouldBeLimited() {
+    public void insertRecordsWithoutExclusionWithCommonOsCountryThenTheResultShouldBeLimited() {
         int total = 3;
         int limit = total - 1;
         List<AdvertiseDbObject> records = generator.generateRecords(total);
@@ -136,16 +131,12 @@ public class JsonCreateTest {
 
         AdvertiseRequestEvent event = new AdvertiseRequestEvent(testCountry, testOs, limit);
 
-        log("To insert: " + records);
-        log("Send requestEvent: " + event);
-
         records.forEach(record ->
-                collectionProvider.get().insert(record.toJson())
+                        collectionProvider.get().insert(record.toJson())
         );
 
         List<Advertise> advertises = dao.retrieveAdvertises(event);
 
-        log(advertises);
         assertThat(advertises, hasSize(limit));
     }
 

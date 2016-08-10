@@ -1,8 +1,7 @@
 package com.loopme.webapp.generator;
 
 import com.google.common.collect.Lists;
-import com.loopme.webapp.dto.Advertise;
-import com.mongodb.BasicDBObject;
+import com.loopme.webapp.model.AdvertiseDbObject;
 
 import java.util.List;
 import java.util.Random;
@@ -38,7 +37,7 @@ public class AdvertiseGenerator {
         record.setDescription("funny ads");
         record.setUrl("http://google.com");
 
-        Random rnd = new Random();
+        Random rnd = new Random(System.nanoTime());
 
         int countiesCount = rnd.nextInt(Countries.size() - 1) + 2;
         int operationSystemsCount = rnd.nextInt(OperationSystems.size() - 1) + 2;

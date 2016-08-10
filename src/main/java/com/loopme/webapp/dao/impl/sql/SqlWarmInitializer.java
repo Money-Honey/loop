@@ -1,4 +1,4 @@
-package com.loopme.webapp.dao.impl;
+package com.loopme.webapp.dao.impl.sql;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

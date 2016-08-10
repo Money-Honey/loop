@@ -17,7 +17,7 @@ import java.util.List;
 @Path("/hole")
 public class EndPoint {
 
-    static Logger log = Logger.getLogger(EndPoint.class.getName());
+    static Logger Log = Logger.getLogger(EndPoint.class.getName());
 
     @Inject
     private AppService service;
@@ -26,7 +26,7 @@ public class EndPoint {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public AdvertiseBunch echo(AdvertiseRequestEvent request) {
-        log.info(String.format("Got request: %s", request));
+        Log.info(String.format("Got request: %s", request));
 
         List<Advertise> advertises = service.proposeAdvertises(request);
 

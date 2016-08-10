@@ -13,7 +13,7 @@ public class RequestTest extends BaseTest {
 
     @Test
     public void requestPostToHoleSlashPostShouldReturnJson() {
-        AdvertiseRequestEvent msg = new AdvertiseRequestEvent("US", "ios", 1);
+        AdvertiseRequestEvent msg = new AdvertiseRequestEvent("GB", "ios", 1);
         given().
                 contentType("application/json").
                 body(msg).
