@@ -39,6 +39,8 @@ public class EntryPoint {
     private static final String SERVER_PORT = "port";
     private static final String CACHE_USE = "cache.use";
 
+    enum DbType { SQL, NoSql }
+
     private final PropertiesReader propertiesReader;
 
     public EntryPoint(final Properties props) {
@@ -47,7 +49,7 @@ public class EntryPoint {
 
     void configureAndStart() throws Exception {
 
-        Module dataBaseModule = createDataBaseModule("nosql");
+        Module dataBaseModule = createDataBaseModule(DbType.NoSql);
         Module cacheModule = createCacheModule();
 
         Server server = createServer(dataBaseModule, cacheModule);
@@ -100,19 +102,20 @@ public class EntryPoint {
     }
 
 
-    private Module createDataBaseModule(final String sql) {
-        switch (sql) {
-            case "sql":
+    private Module createDataBaseModule(DbType dbType) {
+        switch (dbType) {
+            case SQL:
                 final DataSource dataSource = createDataSource();
                 Preconditions.checkNotNull(dataSource, "DataSource is Null. App couldn't be run without it");
 
                 return new SqlDataBaseModule(dataSource);
 
-            case "nosql":
+            case NoSql:
                 Fongo fongo = new Fongo("mongo fake server");
-                return new MongoDataBaseModule(fongo.getDB("fongoname"));
+                return new MongoDataBaseModule(fongo.getDB("loopme"));
             default:
-                throw new IllegalArgumentException("Module type not Supported");
+                throw new IllegalArgumentException(
+                        String.format("Module type not Supported. Supported dbtypes: '%s'", DbType.values()));
         }
     }
 

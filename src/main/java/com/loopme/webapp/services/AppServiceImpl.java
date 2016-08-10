@@ -16,15 +16,11 @@ public class AppServiceImpl implements AppService {
     @Inject
     private AppDao dao;
 
-
-
     @Override
     public List<Advertise> proposeAdvertises(AdvertiseRequestEvent event) {
         if (event.getLimit() == 0) {
             return Lists.newArrayList();
         }
-
-
 
         return dao.retrieveAdvertises(event);
     }
