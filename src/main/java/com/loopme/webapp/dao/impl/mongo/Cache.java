@@ -1,6 +1,7 @@
 package com.loopme.webapp.dao.impl.mongo;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -13,6 +14,7 @@ import org.bson.types.ObjectId;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,31 +42,38 @@ public class Cache {
                 build(new CacheLoader<ObjectId, Advertise>() {
                     @Override
                     public Advertise load(ObjectId objectId) throws Exception {
+                        //never used
+                        return null;
+                    }
+
+                    @Override
+                    public Map<ObjectId, Advertise> loadAll(Iterable<? extends ObjectId> keys) throws Exception {
+                        //the main entry point
                         return null;
                     }
                 });
-
     }
 
-    Map<ObjectId, Advertise> load(List<ObjectId> ids) {
-        Map<ObjectId, Advertise> resultMap = Maps.newHashMap();
+    Map<ObjectId, Advertise> loadAll(List<ObjectId> ids) {
 
-        if (isCacheEnabled) {
-
-            for (ObjectId id : ids) {
-                Advertise advertise = cache.getIfPresent(id);
-
-                if (advertise != null) {
-                    resultMap.put(id, advertise);
-                }
-            }
+        if (!isCacheEnabled) {
+            return Maps.newHashMap();
         }
 
-        return resultMap;
+        try {
+            return cache.getAll(ids);
+        } catch (ExecutionException ex) {
+            Log.error("Something wrong while fetching data by ids", ex);
+            Throwables.propagate(ex);
+        }
+
+        return null;
     }
 
     void put(List<ObjectId> ids, List<Advertise> ads) {
-        if (!isCacheEnabled) return;
+        if (!isCacheEnabled) {
+            return;
+        }
 
         Preconditions.checkArgument(ids.size() == ads.size());
 

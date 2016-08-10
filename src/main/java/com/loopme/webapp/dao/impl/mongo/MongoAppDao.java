@@ -2,7 +2,6 @@ package com.loopme.webapp.dao.impl.mongo;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.loopme.webapp.dao.AppDao;
@@ -49,19 +48,20 @@ public class MongoAppDao implements AppDao {
         if(idList.isEmpty()) {
             return Lists.newArrayList();
         } else {
-            Map<ObjectId, Advertise> cachRecords = cache.load(idList);
 
-            if(cachRecords.size() == idList.size()) {
-                return Lists.newArrayList(cachRecords.values());
+            Map<ObjectId, Advertise> cacheRecords = cache.loadAll(idList);
+
+            if(cacheRecords.size() == idList.size()) {
+                return Lists.newArrayList(cacheRecords.values());
             } else {
 
-                idList.removeAll(cachRecords.keySet());
+                idList.removeAll(cacheRecords.keySet());
 
                 List<Advertise> dbRecords = loadRecordsByIdList(collection, createQueryRecordsByIds(idList));
 
                 cache.put(idList, dbRecords);
 
-                dbRecords.addAll(cachRecords.values());
+                dbRecords.addAll(cacheRecords.values());
                 return dbRecords;
             }
         }
