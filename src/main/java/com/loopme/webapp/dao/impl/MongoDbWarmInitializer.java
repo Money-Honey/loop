@@ -29,8 +29,9 @@ public class MongoDbWarmInitializer implements DbInitializer {
     public void warmDb() {
         DBCollection dbCollection = collectionProvider.get();
 
-        List<AdvertiseDbObject> records = generator.generateRecords(2);
+        dbCollection.createIndex(createCompoundIndexKeys());
 
+        List<AdvertiseDbObject> records = generator.generateRecords(2);
         List<BasicDBObject> dbObjects = records.stream()
                 .map(record -> record.toJson())
                 .collect(Collectors.toList());
@@ -38,5 +39,12 @@ public class MongoDbWarmInitializer implements DbInitializer {
         dbCollection.insert(dbObjects);
 
         Log.info("Db warmed. Records: " + dbObjects);
+    }
+
+    private BasicDBObject createCompoundIndexKeys() {
+        BasicDBObject compoundIndex = new BasicDBObject();
+        compoundIndex.put("countries", 1);
+        compoundIndex.put("os", -1);
+        return compoundIndex;
     }
 }

@@ -10,7 +10,9 @@ import com.loopme.webapp.dto.AdvertiseRequestEvent;
 import com.loopme.webapp.generator.AdvertiseDbObject;
 import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.loopme.webapp.modules.MongoDataBaseModule;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Volodymyr Dema. Will see.
@@ -39,6 +42,11 @@ public class JsonCreateTest {
         collectionProvider = injector.getProvider(DBCollection.class);
     }
 
+    @Before
+    public void cleanUp(){
+        collectionProvider.get().remove(new BasicDBObject());
+    }
+
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithoutExclusions() {
         AdvertiseDbObject record = generator.generateRecord(1);
@@ -51,6 +59,7 @@ public class JsonCreateTest {
         AdvertiseRequestEvent event = new AdvertiseRequestEvent(country, os, 4);
 
         log("To insert: " + record);
+        log("To insert Json: " + record.toJson());
         log("Send requestEvent: " + event);
 
         collectionProvider.get().insert(record.toJson());
@@ -74,6 +83,7 @@ public class JsonCreateTest {
         AdvertiseRequestEvent event = new AdvertiseRequestEvent(country, os, 4);
 
         log("To insert: " + record);
+        log("To insert Json: " + record.toJson());
         log("Send requestEvent: " + event);
 
         collectionProvider.get().insert(record.toJson());
@@ -106,6 +116,37 @@ public class JsonCreateTest {
 
         log(advertises);
         assertThat(advertises, hasSize(1));
+    }
+
+    @Test
+    public void insertRecordsWithoutExclusionWithCommonOsCountryAndTheResultShouldBeLimited() {
+        int total = 3;
+        int limit = total - 1;
+        List<AdvertiseDbObject> records = generator.generateRecords(total);
+
+        String testCountry = "Country";
+        String testOs = "Os";
+
+        records.forEach(record -> {
+            record.getCountries().add(testCountry);
+            record.getOs().add(testOs);
+            record.getExcludedCountries().clear();
+            record.getExcludedOs().clear();
+        });
+
+        AdvertiseRequestEvent event = new AdvertiseRequestEvent(testCountry, testOs, limit);
+
+        log("To insert: " + records);
+        log("Send requestEvent: " + event);
+
+        records.forEach(record ->
+                collectionProvider.get().insert(record.toJson())
+        );
+
+        List<Advertise> advertises = dao.retrieveAdvertises(event);
+
+        log(advertises);
+        assertThat(advertises, hasSize(limit));
     }
 
     public static void log(Object msg) {

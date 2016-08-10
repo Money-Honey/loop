@@ -13,6 +13,7 @@ public class AdvertiseDbObject implements IMongoBean<AdvertiseDbObject> {
     int id;
     String description;
     String url;
+    //ToDo: Use Sets
     List<String> os;
     List<String> countries;
     List<String> excludedOs;
