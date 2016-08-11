@@ -1,4 +1,4 @@
-package com.loopme.webapp.dao.impl.mongo;
+package com.loopme.webapp.dao.impl;
 
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
@@ -7,7 +7,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.loopme.webapp.dao.IRequestLayerDao;
+import com.loopme.webapp.dao.AppDao;
 import com.loopme.webapp.dao.impl.controllers.CachingController;
 import com.loopme.webapp.model.dto.Advertise;
 import org.apache.log4j.Logger;
@@ -26,21 +26,21 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Volodymyr Dema. Will see.
  */
-public class Cache {
+public class CacheableDaoCoordinator {
 
-    static Logger Log = Logger.getLogger(Cache.class.getName());
-
-    final LoadingCache<ObjectId, Advertise> cache;
+    static Logger Log = Logger.getLogger(CacheableDaoCoordinator.class.getName());
 
     @Inject
-    private IRequestLayerDao requestLayerDao;
+    private AppDao dao;
+
+    final LoadingCache<ObjectId, Advertise> cache;
 
     private CachingController controller = new CachingController();
 
     @Inject
-    public Cache(@Named("isCacheEnabled") Boolean isCacheEnabled,
-                 @Named("cacheSize") Integer cacheSize,
-                 @Named("expireTimeSecond") Integer expireTimeSecond) {
+    public CacheableDaoCoordinator(@Named("isCacheEnabled") Boolean isCacheEnabled,
+                                   @Named("cacheSize") Integer cacheSize,
+                                   @Named("expireTimeSecond") Integer expireTimeSecond) {
         controller.setEnabled(isCacheEnabled);
 
         try {
@@ -69,21 +69,21 @@ public class Cache {
         return new CacheLoader<ObjectId, Advertise>() {
             @Override
             public Advertise load(ObjectId objectId) throws Exception {
-                //never used
+                //never used, but delegate
                 return loadAll(Lists.newArrayList(objectId)).get(objectId);
             }
 
             @Override
             public Map<ObjectId, Advertise> loadAll(Iterable<? extends ObjectId> keys) throws Exception {
-                return requestLayerDao.loadRecordsByIdList(Lists.newArrayList(keys));
+                return dao.loadRecordsByIdList(Lists.newArrayList(keys));
             }
         };
     }
 
-    Collection<Advertise> loadAll(List<ObjectId> ids) {
+    public Collection<Advertise> loadAll(List<ObjectId> ids) {
 
         if (!controller.isEnabled()) {
-            return requestLayerDao.loadRecordsByIdList(ids).values();
+            return dao.loadRecordsByIdList(ids).values();
         }
 
         try {

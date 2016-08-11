@@ -4,13 +4,15 @@ import com.github.fakemongo.Fongo;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
-import com.loopme.webapp.dao.AppDao;
+import com.google.inject.util.Modules;
 import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.loopme.webapp.model.AdvertiseDbObject;
 import com.loopme.webapp.model.dto.Advertise;
 import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import com.loopme.webapp.modules.CachModule;
 import com.loopme.webapp.modules.MongoDataBaseModule;
+import com.loopme.webapp.services.AppService;
+import com.loopme.webapp.services.AppServiceImpl;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import org.junit.Before;
@@ -19,6 +21,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.loopme.webapp.generator.AdvertiseGenerator.generateRecord;
+import static com.loopme.webapp.generator.AdvertiseGenerator.generateRecords;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
@@ -29,16 +33,17 @@ public class JsonCreateTest {
 
     static Provider<DBCollection> collectionProvider;
 
-    static AppDao dao;
-
-    AdvertiseGenerator generator = new AdvertiseGenerator();
+    static AppService service;
 
     @BeforeClass
     public static void init() {
         Fongo fongo = new Fongo("mongo fake server");
-        Injector injector = Guice.createInjector(new MongoDataBaseModule(fongo.getDB("fongoname")), new CachModule(true, 10, 1));
+        Injector injector = Guice.createInjector(Modules.override(new MongoDataBaseModule(fongo.getDB("fongoname"), "ads"), new CachModule(true, 10, 1))
+                .with(binder -> {
+                    binder.bind(AppService.class).toInstance(new AppServiceImpl());
+                }));
 
-        dao = injector.getInstance(AppDao.class);
+        service = injector.getInstance(AppService.class);
         collectionProvider = injector.getProvider(DBCollection.class);
     }
 
@@ -49,7 +54,7 @@ public class JsonCreateTest {
 
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithoutExclusions() {
-        AdvertiseDbObject record = generator.generateRecord(1);
+        AdvertiseDbObject record = generateRecord(1);
 
         String os = record.getOs().get(0);
         String country = record.getCountries().get(0);
@@ -62,7 +67,7 @@ public class JsonCreateTest {
         showDetails(record, event);
 
         collectionProvider.get().insert(record.toJson());
-        List<Advertise> advertises = dao.retrieveAdvertises(event);
+        List<Advertise> advertises = service.proposeAdvertises(event);
 
         assertThat(advertises, hasSize(1));
     }
@@ -75,7 +80,7 @@ public class JsonCreateTest {
 
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithExclusionsShoudBeFiltered() {
-        AdvertiseDbObject record = generator.generateRecord(1);
+        AdvertiseDbObject record = generateRecord(1);
 
         String os = record.getOs().get(0);
         String country = record.getCountries().get(0);
@@ -88,14 +93,14 @@ public class JsonCreateTest {
         showDetails(record, event);
 
         collectionProvider.get().insert(record.toJson());
-        List<Advertise> advertises = dao.retrieveAdvertises(event);
+        List<Advertise> advertises = service.proposeAdvertises(event);
 
         assertThat(advertises, hasSize(0));
     }
 
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithOneShoudNotBeFiltered() {
-        AdvertiseDbObject record = generator.generateRecord(1);
+        AdvertiseDbObject record = generateRecord(1);
 
         String os = record.getOs().get(0);
         String country = record.getCountries().get(0);
@@ -108,7 +113,7 @@ public class JsonCreateTest {
         showDetails(record, event);
 
         collectionProvider.get().insert(record.toJson());
-        List<Advertise> advertises = dao.retrieveAdvertises(event);
+        List<Advertise> advertises = service.proposeAdvertises(event);
 
         assertThat(advertises, hasSize(1));
     }
@@ -117,7 +122,7 @@ public class JsonCreateTest {
     public void insertRecordsWithoutExclusionWithCommonOsCountryThenTheResultShouldBeLimited() {
         int total = 3;
         int limit = total - 1;
-        List<AdvertiseDbObject> records = generator.generateRecords(total);
+        List<AdvertiseDbObject> records = generateRecords(total);
 
         String testCountry = "Country";
         String testOs = "Os";
@@ -135,7 +140,7 @@ public class JsonCreateTest {
                         collectionProvider.get().insert(record.toJson())
         );
 
-        List<Advertise> advertises = dao.retrieveAdvertises(event);
+        List<Advertise> advertises = service.proposeAdvertises(event);
 
         assertThat(advertises, hasSize(limit));
     }

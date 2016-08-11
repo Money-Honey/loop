@@ -26,7 +26,7 @@ public class EndPoint {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public AdvertiseBunch echo(AdvertiseRequestEvent request) {
-        Log.info(String.format("Got request: %s", request));
+        Log.debug(String.format("Got request: %s", request));
 
         List<Advertise> advertises = service.proposeAdvertises(request);
 

@@ -2,15 +2,17 @@ package com.loopme.webapp.dao.impl.mongo;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import com.loopme.webapp.dao.DbInitializer;
 import com.loopme.webapp.model.AdvertiseDbObject;
-import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.loopme.webapp.generator.AdvertiseGenerator.generateRecords;
 
 /**
  * Created by Volodymyr Dema. Will see.
@@ -22,8 +24,9 @@ public class MongoDbWarmInitializer implements DbInitializer {
     @Inject
     private Provider<DBCollection> collectionProvider;
 
-    @Inject
-    private AdvertiseGenerator generator;
+    @Inject(optional = true)
+    @Named("initialRecordsCount")
+    private Integer initialRecordsCount = 10;
 
     @Override
     public void warmDb() {
@@ -31,14 +34,14 @@ public class MongoDbWarmInitializer implements DbInitializer {
 
         dbCollection.createIndex(createCompoundIndexKeys());
 
-        List<AdvertiseDbObject> records = generator.generateRecords(2);
+        List<AdvertiseDbObject> records = generateRecords(initialRecordsCount);
         List<BasicDBObject> dbObjects = records.stream()
                 .map(record -> record.toJson())
                 .collect(Collectors.toList());
 
         dbCollection.insert(dbObjects);
 
-        Log.info("Db warmed. Records: " + dbObjects);
+        Log.info("Db warmed. Records size: " + dbObjects.size());
     }
 
     private BasicDBObject createCompoundIndexKeys() {

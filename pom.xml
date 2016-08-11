@@ -7,12 +7,15 @@
     <groupId>loopme</groupId>
     <artifactId>restfullserver</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
     <name>Advertising WebApp</name>
 
+
     <properties>
+        <argLine>-XX:+UseParallelGC</argLine>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <rest-assured.version>2.9.0</rest-assured.version>
         <jetty.version>9.3.11.v20160721</jetty.version>
@@ -47,10 +50,34 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.5.0</version>
                 <executions>
-                    <execution><goals><goal>java</goal></goals></execution>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
                     <mainClass>com.loopme.webapp.runnable.EntryPoint</mainClass>
+                    <arguments>
+                        <argument>-XX:+UseParallelGC</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <outputDirectory>target</outputDirectory>
+                    <finalName>server</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.loopme.webapp.runnable.EntryPoint</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -70,7 +97,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Jetty -->
         <dependency>
@@ -194,6 +226,8 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongo.version}</version>
         </dependency>
+
+
     </dependencies>
 
 </project>

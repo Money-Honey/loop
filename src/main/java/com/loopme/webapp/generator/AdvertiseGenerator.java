@@ -20,7 +20,7 @@ public class AdvertiseGenerator {
             "android", "ios", "windows 10 mobile", "blackberry 10", "firefox os", "tizen"
     );
 
-    public List<AdvertiseDbObject> generateRecords(int count) {
+    public static List<AdvertiseDbObject> generateRecords(int count) {
         List<AdvertiseDbObject> records = Lists.newArrayList();
 
         IntStream.range(1, count).forEach(
@@ -30,7 +30,7 @@ public class AdvertiseGenerator {
         return records;
     }
 
-    public AdvertiseDbObject generateRecord(int id) {
+    public static AdvertiseDbObject generateRecord(int id) {
         AdvertiseDbObject record = new AdvertiseDbObject();
 
         record.setId(id);
@@ -63,7 +63,7 @@ public class AdvertiseGenerator {
         return record;
     }
 
-    private int simpleAdjust(int size) {
+    private static int simpleAdjust(int size) {
         if(size == 0) return 1;
         return size > 1 ? size - 1 : size;
     }

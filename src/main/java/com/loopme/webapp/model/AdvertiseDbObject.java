@@ -9,7 +9,7 @@ import java.util.List;
  * @author <a href="mailto:vdema@luxoft.com">Vladimir Dema</a>
  */
 @Data
-public class AdvertiseDbObject implements IMongoBean<AdvertiseDbObject> {
+public class AdvertiseDbObject implements MongoBean<AdvertiseDbObject> {
     int id;
     String description;
     String url;

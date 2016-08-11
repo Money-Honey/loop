@@ -1,6 +1,8 @@
 package com.loopme.webapp.modules;
 
 import com.google.inject.Scopes;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
 import com.loopme.webapp.restfull.EndPoint;
 import com.loopme.webapp.services.AppService;

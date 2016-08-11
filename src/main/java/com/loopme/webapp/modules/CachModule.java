@@ -4,7 +4,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
-import com.loopme.webapp.dao.impl.mongo.Cache;
+import com.loopme.webapp.dao.impl.CacheableDaoCoordinator;
 
 /**
  * @author <a href="mailto:vdema@luxoft.com">Vladimir Dema</a>
@@ -25,6 +25,6 @@ public class CachModule implements Module {
         binder.bind(Integer.class).annotatedWith(Names.named("cacheSize")).toInstance(cacheSize);
         binder.bind(Integer.class).annotatedWith(Names.named("expireTimeSecond")).toInstance(cacheExpireTimeInSeconds);
 
-        binder.bind(Cache.class).in(Scopes.SINGLETON);
+        binder.bind(CacheableDaoCoordinator.class).in(Scopes.SINGLETON);
     }
 }
