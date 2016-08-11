@@ -7,11 +7,15 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.loopme.webapp.dao.impl.controllers.CachingController;
 import com.loopme.webapp.dto.Advertise;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import javax.inject.Named;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +31,23 @@ public class Cache {
 
     final LoadingCache<ObjectId, Advertise> cache;
 
-    final Boolean isCacheEnabled;
-
     @Inject
     private RequestLayerDao requestLayerDao;
 
+    private CachingController controller = new CachingController();
+
     @Inject
     public Cache(@Named("isCacheEnabled") Boolean isCacheEnabled) {
-        this.isCacheEnabled = isCacheEnabled;
+
+        try {
+            MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
+            platformMBeanServer.registerMBean(controller, new ObjectName("caching", "name", "controller"));
+        } catch (Exception e) {
+            Log.error(String.format("Caching controller there was no registered. " +
+                    "Use default setting flag. Cache is enabled: '%s'", isCacheEnabled));
+
+            controller.setEnabled(isCacheEnabled);
+        }
 
         cache = CacheBuilder.newBuilder().
                 maximumSize(2000).
@@ -65,7 +78,7 @@ public class Cache {
 
     Collection<Advertise> loadAll(List<ObjectId> ids) {
 
-        if (!isCacheEnabled) {
+        if (!controller.isEnabled()) {
             return requestLayerDao.loadRecordsByIdList(ids).values();
         }
 
