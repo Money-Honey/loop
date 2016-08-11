@@ -1,6 +1,6 @@
 package com.loopme.webapp;
 
-import com.loopme.webapp.dto.AdvertiseRequestEvent;
+import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -13,7 +13,7 @@ public class RequestTest extends BaseTest {
 
     @Test
     public void requestPostToHoleSlashPostShouldReturnJson() {
-        AdvertiseRequestEvent msg = new AdvertiseRequestEvent("GB", "ios", 1);
+        AdvertiseRequestEvent msg = new AdvertiseRequestEvent("VA", "ios", 1);
         given().
                 contentType("application/json").
                 body(msg).

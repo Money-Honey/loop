@@ -4,8 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.loopme.webapp.dto.Advertise;
-import com.loopme.webapp.dto.AdvertiseRequestEvent;
+import com.loopme.webapp.dao.IRequestLayerDao;
+import com.loopme.webapp.model.dto.Advertise;
+import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -19,7 +20,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:vdema@luxoft.com">Vladimir Dema</a>
  */
-public class RequestLayerDao {
+public class RequestLayerDao implements IRequestLayerDao {
 
     @Inject
     private Provider<DBCollection> connectionProvider;
@@ -56,7 +57,7 @@ public class RequestLayerDao {
     private BasicDBObject createQueryRecordsByIds(List<ObjectId> ids) {
         BasicDBObject query = new BasicDBObject("_id", new BasicDBObject("$in", ids));
 
-        Log.info("QuerryByIds: " + query.toString());
+        Log.debug("QuerryByIds: " + query.toString());
 
         return query;
     }
@@ -86,7 +87,7 @@ public class RequestLayerDao {
         obj.add(exclusiveQuery);
         andQuery.put("$and", obj);
 
-        Log.info("Querry forId: " + andQuery.toString());
+        Log.debug("Querry forId: " + andQuery.toString());
 
         return andQuery;
     }

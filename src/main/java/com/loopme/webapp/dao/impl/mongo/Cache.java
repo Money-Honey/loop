@@ -7,8 +7,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.loopme.webapp.dao.IRequestLayerDao;
 import com.loopme.webapp.dao.impl.controllers.CachingController;
-import com.loopme.webapp.dto.Advertise;
+import com.loopme.webapp.model.dto.Advertise;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
@@ -32,12 +33,15 @@ public class Cache {
     final LoadingCache<ObjectId, Advertise> cache;
 
     @Inject
-    private RequestLayerDao requestLayerDao;
+    private IRequestLayerDao requestLayerDao;
 
     private CachingController controller = new CachingController();
 
     @Inject
-    public Cache(@Named("isCacheEnabled") Boolean isCacheEnabled) {
+    public Cache(@Named("isCacheEnabled") Boolean isCacheEnabled,
+                 @Named("cacheSize") Integer cacheSize,
+                 @Named("expireTimeSecond") Integer expireTimeSecond) {
+        controller.setEnabled(isCacheEnabled);
 
         try {
             MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -50,8 +54,8 @@ public class Cache {
         }
 
         cache = CacheBuilder.newBuilder().
-                maximumSize(2000).
-                expireAfterAccess(10, TimeUnit.SECONDS).
+                maximumSize(cacheSize).
+                expireAfterAccess(expireTimeSecond, TimeUnit.SECONDS).
                 removalListener(createRemovalListener()).
                 build(createCacheLoader());
     }

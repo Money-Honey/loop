@@ -3,8 +3,8 @@ package com.loopme.webapp.services;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.loopme.webapp.dao.AppDao;
-import com.loopme.webapp.dto.Advertise;
-import com.loopme.webapp.dto.AdvertiseRequestEvent;
+import com.loopme.webapp.model.dto.Advertise;
+import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 
 import java.util.List;
 
@@ -21,6 +21,8 @@ public class AppServiceImpl implements AppService {
         if (event.getLimit() == 0) {
             return Lists.newArrayList();
         }
+
+
 
         return dao.retrieveAdvertises(event);
     }

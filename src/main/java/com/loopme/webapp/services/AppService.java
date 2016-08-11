@@ -1,7 +1,7 @@
 package com.loopme.webapp.services;
 
-import com.loopme.webapp.dto.Advertise;
-import com.loopme.webapp.dto.AdvertiseRequestEvent;
+import com.loopme.webapp.model.dto.Advertise;
+import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 
 import java.util.List;
 

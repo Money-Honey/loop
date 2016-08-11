@@ -11,14 +11,20 @@ import com.loopme.webapp.dao.impl.mongo.Cache;
  */
 public class CachModule implements Module {
     private final boolean isCachEnabled;
+    private final int cacheSize, cacheExpireTimeInSeconds;
 
-    public CachModule(boolean isCachEnabled) {
+    public CachModule(boolean isCachEnabled, int cacheSize, int cacheExpireTimeInSeconds) {
         this.isCachEnabled = isCachEnabled;
+        this.cacheSize = cacheSize;
+        this.cacheExpireTimeInSeconds = cacheExpireTimeInSeconds;
     }
 
     @Override
     public void configure(Binder binder) {
         binder.bind(Boolean.class).annotatedWith(Names.named("isCacheEnabled")).toInstance(isCachEnabled);
+        binder.bind(Integer.class).annotatedWith(Names.named("cacheSize")).toInstance(cacheSize);
+        binder.bind(Integer.class).annotatedWith(Names.named("expireTimeSecond")).toInstance(cacheExpireTimeInSeconds);
+
         binder.bind(Cache.class).in(Scopes.SINGLETON);
     }
 }

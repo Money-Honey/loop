@@ -38,6 +38,8 @@ public class EntryPoint {
     private static final String PROP_DATABASE_USERNAME = "db.username";
     private static final String SERVER_PORT = "port";
     private static final String CACHE_USE = "cache.use";
+    private static final String CACHE_SIZE = "cache.size";
+    private static final String CACHE_EXPIRE_SECONDS = "cache.expire_seconds";
 
     enum DbType { SQL, NoSql }
 
@@ -65,9 +67,11 @@ public class EntryPoint {
     }
 
     private Module createCacheModule() {
-        Boolean isCachEnabled = propertiesReader.get(CACHE_USE).asBoolean(false);
+        boolean isCachEnabled = propertiesReader.get(CACHE_USE).asBoolean(false);
+        int cacheSize = propertiesReader.get(CACHE_SIZE).asInt(2000);
+        int cacheExpireTimeInSeconds = propertiesReader.get(CACHE_EXPIRE_SECONDS).asInt(5);
 
-        return new CachModule(isCachEnabled);
+        return new CachModule(isCachEnabled, cacheSize, cacheExpireTimeInSeconds);
     }
 
     private Server createServer(final Module...baseModules) {

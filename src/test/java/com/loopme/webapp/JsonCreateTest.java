@@ -5,10 +5,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.loopme.webapp.dao.AppDao;
-import com.loopme.webapp.dto.Advertise;
-import com.loopme.webapp.dto.AdvertiseRequestEvent;
 import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.loopme.webapp.model.AdvertiseDbObject;
+import com.loopme.webapp.model.dto.Advertise;
+import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import com.loopme.webapp.modules.CachModule;
 import com.loopme.webapp.modules.MongoDataBaseModule;
 import com.mongodb.BasicDBObject;
@@ -36,7 +36,7 @@ public class JsonCreateTest {
     @BeforeClass
     public static void init() {
         Fongo fongo = new Fongo("mongo fake server");
-        Injector injector = Guice.createInjector(new MongoDataBaseModule(fongo.getDB("fongoname")), new CachModule(true));
+        Injector injector = Guice.createInjector(new MongoDataBaseModule(fongo.getDB("fongoname")), new CachModule(true, 10, 1));
 
         dao = injector.getInstance(AppDao.class);
         collectionProvider = injector.getProvider(DBCollection.class);

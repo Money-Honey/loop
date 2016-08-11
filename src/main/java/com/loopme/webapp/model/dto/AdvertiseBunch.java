@@ -1,4 +1,4 @@
-package com.loopme.webapp.dto;
+package com.loopme.webapp.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

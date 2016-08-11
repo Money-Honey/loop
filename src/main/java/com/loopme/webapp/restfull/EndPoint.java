@@ -1,9 +1,9 @@
 package com.loopme.webapp.restfull;
 
 import com.google.inject.Inject;
-import com.loopme.webapp.dto.Advertise;
-import com.loopme.webapp.dto.AdvertiseBunch;
-import com.loopme.webapp.dto.AdvertiseRequestEvent;
+import com.loopme.webapp.model.dto.Advertise;
+import com.loopme.webapp.model.dto.AdvertiseBunch;
+import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import com.loopme.webapp.services.AppService;
 import org.apache.log4j.Logger;
 

@@ -1,4 +1,4 @@
-package com.loopme.webapp.dto;
+package com.loopme.webapp.model.dto;
 
 import com.mongodb.BasicDBObject;
 import lombok.AllArgsConstructor;
