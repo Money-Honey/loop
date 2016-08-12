@@ -1,3 +1,5 @@
+#(Server port by default is 8081)
+- but you can change before compiling in file loop/src/main/resources/cfg.properties -> port=newPortNumber
 #For build project use next
 1) - mvn clean install
     OR
