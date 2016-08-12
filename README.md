@@ -24,12 +24,13 @@ Logic tested by rest-assured framework
    - load from database appropriate records
 3) - Added Caching mechanism from Guava
    - Loading data by ids made through this cache to prevent additional request to database
-   - Cache can be disabled from Mbean server
+   - Cache can be disabled from Mbean server and fluently tune from cfg.properties file.
 
 #Testing
 - There was used JMeter to test server
 - When size of threads is rising up to 60, HTTP Request failed with errors:
 
+    e.g.
   Thread Name: Thread Group 1-20
 
   1 - Response code: Non HTTP response code: java.net.SocketException
