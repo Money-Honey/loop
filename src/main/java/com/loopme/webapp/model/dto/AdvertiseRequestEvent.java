@@ -3,7 +3,7 @@ package com.loopme.webapp.model.dto;
 import lombok.*;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 @Setter
 @Getter

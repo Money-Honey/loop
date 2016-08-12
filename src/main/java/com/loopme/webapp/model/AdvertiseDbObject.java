@@ -4,20 +4,20 @@ import com.mongodb.BasicDBObject;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 /**
- * @author <a href="mailto:vdema@luxoft.com">Vladimir Dema</a>
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 @Data
 public class AdvertiseDbObject implements MongoBean<AdvertiseDbObject> {
     int id;
     String description;
     String url;
-    //ToDo: Use Sets
-    List<String> os;
-    List<String> countries;
-    List<String> excludedOs;
-    List<String> excludedCountries;
+    Set<String> os;
+    Set<String> countries;
+    Set<String> excludedOs;
+    Set<String> excludedCountries;
 
     @Override
     public BasicDBObject toJson() {
@@ -38,10 +38,10 @@ public class AdvertiseDbObject implements MongoBean<AdvertiseDbObject> {
         id = o.getInt("id");
         description = o.getString("description");
         url = o.getString("url");
-        os = (List)o.get("os");
-        countries = (List)o.get("countries");
-        excludedOs = (List)o.get("excluded_os");
-        excludedCountries = (List)o.get("excluded_countries");
+        os = (Set)o.get("os");
+        countries = (Set)o.get("countries");
+        excludedOs = (Set)o.get("excluded_os");
+        excludedCountries = (Set)o.get("excluded_countries");
         return this;
     }
 }

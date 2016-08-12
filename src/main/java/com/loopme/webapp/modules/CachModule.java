@@ -7,7 +7,7 @@ import com.google.inject.name.Names;
 import com.loopme.webapp.dao.impl.CacheableDaoCoordinator;
 
 /**
- * @author <a href="mailto:vdema@luxoft.com">Vladimir Dema</a>
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class CachModule implements Module {
     private final boolean isCachEnabled;

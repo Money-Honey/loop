@@ -13,7 +13,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class MongoDataBaseModule implements Module {
 

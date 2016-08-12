@@ -1,7 +1,7 @@
 package com.loopme.webapp.dao;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public interface DbInitializer {
     void warmDb();

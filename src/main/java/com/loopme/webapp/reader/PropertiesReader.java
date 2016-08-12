@@ -3,7 +3,7 @@ package com.loopme.webapp.reader;
 import java.util.Properties;
 
 /**
- * @author <a href="mailto:vdema@luxoft.com">Vladimir Dema</a>
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class PropertiesReader {
     private final Properties properties;

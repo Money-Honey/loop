@@ -19,9 +19,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
-public class BaseTest {
+public class BaseRestTest {
     static String dbCollectionName = "mycollectionName";
 
     static protected FongoDB fongoDb;
@@ -58,7 +58,7 @@ public class BaseTest {
         serverPoint.stopServer();
     }
 
-    protected void insert(AdvertiseDbObject dbrecord) {
+    protected void insertDbRecord(AdvertiseDbObject dbrecord) {
         fongoDb.getCollection(dbCollectionName).insert(dbrecord.toJson());
     }
 }

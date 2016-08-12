@@ -6,7 +6,7 @@ import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import java.util.List;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public interface AppService {
     List<Advertise> proposeAdvertises(AdvertiseRequestEvent event);

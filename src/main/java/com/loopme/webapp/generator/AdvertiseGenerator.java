@@ -1,14 +1,16 @@
 package com.loopme.webapp.generator;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.loopme.webapp.model.AdvertiseDbObject;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class AdvertiseGenerator {
 
@@ -23,11 +25,20 @@ public class AdvertiseGenerator {
     public static List<AdvertiseDbObject> generateRecords(int count) {
         List<AdvertiseDbObject> records = Lists.newArrayList();
 
-        IntStream.range(1, count).forEach(
+        IntStream.range(1, count + 1).forEach(
                 id -> records.add(generateRecord(id))
         );
 
         return records;
+    }
+
+    public static AdvertiseDbObject generateRecord(int id, String os, String country) {
+        AdvertiseDbObject record = generateRecord(id);
+
+        record.getCountries().add(country);
+        record.getOs().add(os);
+
+        return record;
     }
 
     public static AdvertiseDbObject generateRecord(int id) {
@@ -42,29 +53,33 @@ public class AdvertiseGenerator {
         int countiesCount = rnd.nextInt(Countries.size() - 1) + 2;
         int operationSystemsCount = rnd.nextInt(OperationSystems.size() - 1) + 2;
 
-        List<String> countries = Lists.newArrayList();
+        Set<String> countries = Sets.newHashSet();
         IntStream.range(1, countiesCount).forEach(
-                idx -> countries.add(Countries.get(rnd.nextInt(simpleAdjust(Countries.size()))))
+                idx -> countries.add(Countries.get(rnd.nextInt(adjustForArrayBounds(Countries.size()))))
         );
 
-        List<String> operationSystems = Lists.newArrayList();
+        Set<String> operationSystems = Sets.newHashSet();
         IntStream.range(1, operationSystemsCount).forEach(
-                idx -> operationSystems.add(OperationSystems.get(rnd.nextInt(simpleAdjust(OperationSystems.size()))))
+                idx -> operationSystems.add(OperationSystems.get(rnd.nextInt(adjustForArrayBounds(OperationSystems.size()))))
         );
 
-        String excludeOs = operationSystems.get(rnd.nextInt(simpleAdjust(operationSystems.size())));
-        String excludeCountries = countries.get(rnd.nextInt(simpleAdjust(countries.size())));
+        String excludeOs = operationSystems.iterator().next();
+        String excludeCountries = countries.iterator().next();
 
         record.setOs(operationSystems);
         record.setCountries(countries);
-        record.setExcludedOs(Lists.newArrayList(excludeOs));
-        record.setExcludedCountries(Lists.newArrayList(excludeCountries));
+        record.setExcludedOs(Sets.newHashSet(excludeOs));
+        record.setExcludedCountries(Sets.newHashSet(excludeCountries));
 
         return record;
     }
 
-    private static int simpleAdjust(int size) {
-        if(size == 0) return 1;
-        return size > 1 ? size - 1 : size;
+    private static int adjustForArrayBounds(int size) {
+        if(size == 0 || size == 1) return 1;
+        if(size > 1) {
+            return size - 1;
+        } else {
+            return size;
+        }
     }
 }

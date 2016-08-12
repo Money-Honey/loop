@@ -10,11 +10,12 @@ import org.apache.log4j.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
-@Path("/hole")
+@Path("/ads")
 public class EndPoint {
 
     static Logger Log = Logger.getLogger(EndPoint.class.getName());
@@ -28,8 +29,17 @@ public class EndPoint {
     public AdvertiseBunch echo(AdvertiseRequestEvent request) {
         Log.debug(String.format("Got request: %s", request));
 
+        delayInMiliseconds(20);
+
         List<Advertise> advertises = service.proposeAdvertises(request);
 
         return new AdvertiseBunch(advertises);
+    }
+
+    private void delayInMiliseconds(int milliseconds) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(milliseconds);
+        } catch (InterruptedException ignored) {
+        }
     }
 }

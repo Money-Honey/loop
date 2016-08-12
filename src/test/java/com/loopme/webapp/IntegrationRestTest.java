@@ -1,7 +1,5 @@
 package com.loopme.webapp;
 
-import com.google.common.collect.Lists;
-import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.loopme.webapp.model.AdvertiseDbObject;
 import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import com.mongodb.BasicDBObject;
@@ -13,9 +11,9 @@ import static com.loopme.webapp.generator.AdvertiseGenerator.generateRecord;
 import static org.hamcrest.Matchers.hasSize;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
-public class RequestTest extends BaseTest {
+public class IntegrationRestTest extends BaseRestTest {
 
     @After
     public void afterTestCleanup() {
@@ -23,15 +21,10 @@ public class RequestTest extends BaseTest {
     }
 
     @Test
-    public void requestPostToHoleSlashPostShouldReturnJson() {
-        AdvertiseDbObject testDbRecord = generateRecord(1);
-        testDbRecord.setCountries(Lists.newArrayList("US"));
-        testDbRecord.setOs(Lists.newArrayList("windows 10 mobile"));
+    public void requestPostToAdsUrlShouldReturnJson() {
+        AdvertiseDbObject testDbRecord = generateRecordWithoutExclusions(1, "windows 10 mobile", "US");
 
-        testDbRecord.setExcludedCountries(Lists.newArrayList("NOT US"));
-        testDbRecord.setExcludedOs(Lists.newArrayList("NOT windows 10 mobile"));
-
-        insert(testDbRecord);
+        insertDbRecord(testDbRecord);
 
         AdvertiseRequestEvent msg = new AdvertiseRequestEvent("US", "windows 10 mobile", 1);
 
@@ -39,7 +32,7 @@ public class RequestTest extends BaseTest {
                 contentType("application/json").
                 body(msg).
         when().
-                post("/hole").
+                post("/ads").
         then().
                 body("ads", hasSize(1));
     }
@@ -50,8 +43,19 @@ public class RequestTest extends BaseTest {
                 contentType("application/json").
                 body("Something other. Not event.").
         when().
-                post("/hole").
+                post("/ads").
         then().
                 statusCode(500);
+    }
+
+    private AdvertiseDbObject generateRecordWithoutExclusions(int id, String os, String country) {
+        AdvertiseDbObject record = generateRecord(id, os, country);
+
+        record.getExcludedCountries().clear();
+        record.getExcludedCountries().add("NOT " + country);
+        record.getExcludedOs().clear();
+        record.getExcludedOs().add("NOT " + os);
+
+        return record;
     }
 }

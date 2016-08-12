@@ -5,7 +5,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.util.Modules;
-import com.loopme.webapp.generator.AdvertiseGenerator;
 import com.loopme.webapp.model.AdvertiseDbObject;
 import com.loopme.webapp.model.dto.Advertise;
 import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
@@ -27,7 +26,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class JsonCreateTest {
 
@@ -54,15 +53,12 @@ public class JsonCreateTest {
 
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithoutExclusions() {
-        AdvertiseDbObject record = generateRecord(1);
-
-        String os = record.getOs().get(0);
-        String country = record.getCountries().get(0);
+        AdvertiseDbObject record = generateRecord(1, "ios", "UA");
 
         record.getExcludedCountries().clear();
         record.getExcludedOs().clear();
 
-        AdvertiseRequestEvent event = new AdvertiseRequestEvent(country, os, 4);
+        AdvertiseRequestEvent event = new AdvertiseRequestEvent("UA", "ios", 4);
 
         showDetails(record, event);
 
@@ -72,18 +68,11 @@ public class JsonCreateTest {
         assertThat(advertises, hasSize(1));
     }
 
-    private void showDetails(AdvertiseDbObject record, AdvertiseRequestEvent event) {
-        log("To insert: " + record);
-        log("To insert Json: " + record.toJson());
-        log("Send requestEvent: " + event);
-    }
-
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithExclusionsShoudBeFiltered() {
-        AdvertiseDbObject record = generateRecord(1);
-
-        String os = record.getOs().get(0);
-        String country = record.getCountries().get(0);
+        String os = "ios";
+        String country = "UA";
+        AdvertiseDbObject record = generateRecord(1, os, country);
 
         record.getExcludedOs().add(os);
         record.getExcludedCountries().add(country);
@@ -100,10 +89,9 @@ public class JsonCreateTest {
 
     @Test
     public void insertOneRecordAndRetriveItFromCollectionWithOneShoudNotBeFiltered() {
-        AdvertiseDbObject record = generateRecord(1);
-
-        String os = record.getOs().get(0);
-        String country = record.getCountries().get(0);
+        String os = "ios";
+        String country = "UA";
+        AdvertiseDbObject record = generateRecord(1, os, country);
 
         record.getExcludedOs().add(os);
         record.getExcludedCountries().clear();
@@ -143,6 +131,12 @@ public class JsonCreateTest {
         List<Advertise> advertises = service.proposeAdvertises(event);
 
         assertThat(advertises, hasSize(limit));
+    }
+
+    private void showDetails(AdvertiseDbObject record, AdvertiseRequestEvent event) {
+        log("To insert: " + record);
+        log("To insert Json: " + record.toJson());
+        log("Send requestEvent: " + event);
     }
 
     public static void log(Object msg) {

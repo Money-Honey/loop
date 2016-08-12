@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class EntryPoint {
     public static final String CONFIGURATION_FILE_NAME = "cfg.properties";

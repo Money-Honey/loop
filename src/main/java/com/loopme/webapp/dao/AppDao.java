@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public interface AppDao {
     Map<ObjectId, Advertise> loadRecordsByIdList(List<ObjectId> idList);

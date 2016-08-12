@@ -1,7 +1,7 @@
 package com.loopme.webapp.dao.impl.controllers;
 
 /**
- * @author <a href="mailto:vdema@luxoft.com">Vladimir Dema</a>
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class CachingController implements CachingControllerMBean {
     private boolean enabled;

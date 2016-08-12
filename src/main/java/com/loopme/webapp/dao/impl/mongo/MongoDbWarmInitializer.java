@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static com.loopme.webapp.generator.AdvertiseGenerator.generateRecords;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class MongoDbWarmInitializer implements DbInitializer {
 
@@ -26,7 +26,7 @@ public class MongoDbWarmInitializer implements DbInitializer {
 
     @Inject(optional = true)
     @Named("initialRecordsCount")
-    private Integer initialRecordsCount = 10;
+    private Integer initialRecordsCount = 2000;
 
     @Override
     public void warmDb() {
@@ -41,13 +41,28 @@ public class MongoDbWarmInitializer implements DbInitializer {
 
         dbCollection.insert(dbObjects);
 
+        showInfo(dbObjects);
+    }
+
+    private void showInfo(List<BasicDBObject> dbObjects) {
         Log.info("Db warmed. Records size: " + dbObjects.size());
+        if(!dbObjects.isEmpty()) {
+            Log.info("First 10 records: ");
+
+            for (int i = 0; i < dbObjects.size(); i++) {
+                if (i >= 10) break;
+
+                Log.info(dbObjects.get(i));
+            }
+        }
     }
 
     private BasicDBObject createCompoundIndexKeys() {
         BasicDBObject compoundIndex = new BasicDBObject();
+
         compoundIndex.put("countries", 1);
-        compoundIndex.put("os", -1);
+        compoundIndex.put("os", 1);
+
         return compoundIndex;
     }
 }

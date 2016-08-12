@@ -18,9 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Volodymyr Dema. Will see.
+ * @author <a href="mailto:dema.luxoft@gmail.com">Volodymyr Dema</a>
  */
 public class MongoAppDao implements AppDao {
+
+    public static final String DB_ID = "_id";
 
     static Logger Log = Logger.getLogger(MongoAppDao.class.getName());
 
@@ -49,13 +51,13 @@ public class MongoAppDao implements AppDao {
 
         List<ObjectId> result = Lists.newArrayList();
         try (DBCursor cursor = connectionProvider.get().find(query, new BasicDBObject())) {
-            while (cursor.hasNext()) result.add(new ObjectId(((BasicDBObject) cursor.next()).getString("_id")));
+            while (cursor.hasNext()) result.add(new ObjectId(((BasicDBObject) cursor.next()).getString(DB_ID)));
         }
         return result;
     }
 
     private BasicDBObject createQueryRecordsByIds(List<ObjectId> ids) {
-        BasicDBObject query = new BasicDBObject("_id", new BasicDBObject("$in", ids));
+        BasicDBObject query = new BasicDBObject(DB_ID, new BasicDBObject("$in", ids));
 
         Log.debug("QuerryByIds: " + query.toString());
 
