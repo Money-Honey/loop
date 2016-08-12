@@ -28,7 +28,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public List<Advertise> proposeAdvertises(AdvertiseRequestEvent event) {
-        if (event.getLimit() == 0) {
+        if (event.getLimit() <= 0) {
             return Lists.newArrayList();
         }
 
