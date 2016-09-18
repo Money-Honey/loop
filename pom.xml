@@ -28,8 +28,11 @@
         <fongo.version>2.0.7</fongo.version>
         <mongo.version>3.3.0</mongo.version>
 
+        <hadoop.version>2.6.0</hadoop.version>
+
         <!-- app params -->
         <server.port>8081</server.port>
+        <hbase.version>1.1.2</hbase.version>
     </properties>
 
     <build>
@@ -64,17 +67,17 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>1.6</version>
                 <!--<configuration>-->
-                    <!--<createDependencyReducedPom>true</createDependencyReducedPom>-->
-                    <!--<filters>-->
-                        <!--<filter>-->
-                            <!--<artifact>*:*</artifact>-->
-                            <!--<excludes>-->
-                                <!--<exclude>META-INF/*.SF</exclude>-->
-                                <!--<exclude>META-INF/*.DSA</exclude>-->
-                                <!--<exclude>META-INF/*.RSA</exclude>-->
-                            <!--</excludes>-->
-                        <!--</filter>-->
-                    <!--</filters>-->
+                <!--<createDependencyReducedPom>true</createDependencyReducedPom>-->
+                <!--<filters>-->
+                <!--<filter>-->
+                <!--<artifact>*:*</artifact>-->
+                <!--<excludes>-->
+                <!--<exclude>META-INF/*.SF</exclude>-->
+                <!--<exclude>META-INF/*.DSA</exclude>-->
+                <!--<exclude>META-INF/*.RSA</exclude>-->
+                <!--</excludes>-->
+                <!--</filter>-->
+                <!--</filters>-->
                 <!--</configuration>-->
 
                 <executions>
@@ -86,7 +89,7 @@
                         <configuration>
                             <transformers>
                                 <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
@@ -120,6 +123,30 @@
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>1.0-groovy-2.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-core</artifactId>
+            <version>4.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-stream</artifactId>
+            <version>4.0.4</version>
         </dependency>
 
         <!-- Jetty -->
@@ -251,6 +278,54 @@
             <version>${mongo.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>${hbase.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>${hbase.version}</version>
+            <!--<type>pom</type>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-common</artifactId>
+            <version>${hbase.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-shuffle</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-common</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-app</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
 
     </dependencies>
 

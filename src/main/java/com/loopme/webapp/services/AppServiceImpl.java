@@ -9,6 +9,7 @@ import com.loopme.webapp.model.dto.Advertise;
 import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
+import rx.Observable;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,17 +33,20 @@ public class AppServiceImpl implements AppService {
             return Lists.newArrayList();
         }
 
-        List<ObjectId> idList = dao.loadMatchedIds(event);
-        if (idList.isEmpty()) {
-            return Lists.newArrayList();
-        }
-
-        Log.debug("Id list: " + idList);
-
-        Collections.shuffle(idList);
-        idList = trimToLimit(event.getLimit(), idList);
-
-        return Lists.newArrayList(cacheableDaoCoordinator.loadAll(idList));
+        return dao.rxLoadMatchedIds(event)
+                .toList()
+                .doOnNext(list -> Log.debug("Id list: " + list))
+                .doOnNext(Collections::shuffle)
+                .map(list -> trimToLimit(event.getLimit(), list))
+                .flatMap(list -> {
+                    try {
+                        return Observable.just(Lists.newArrayList(cacheableDaoCoordinator.loadAll(list)));
+                    } catch (Throwable ex) {
+                        return Observable.error(ex);
+                    }
+                })
+                .toBlocking()
+                .single();
     }
 
     private List<ObjectId> trimToLimit(int limit, List<ObjectId> idList) {

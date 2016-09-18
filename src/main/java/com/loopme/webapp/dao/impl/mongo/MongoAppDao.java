@@ -13,6 +13,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
+import rx.Observable;
 
 import java.util.List;
 import java.util.Map;
@@ -46,14 +47,20 @@ public class MongoAppDao implements AppDao {
         return records;
     }
 
-    public List<ObjectId> loadMatchedIds(AdvertiseRequestEvent event) {
+    private List<ObjectId> loadMatchedIds(AdvertiseRequestEvent event) {
         DBObject query = createQuery(event);
 
         List<ObjectId> result = Lists.newArrayList();
         try (DBCursor cursor = connectionProvider.get().find(query, new BasicDBObject())) {
             while (cursor.hasNext()) result.add(new ObjectId(((BasicDBObject) cursor.next()).getString(DB_ID)));
         }
+
         return result;
+    }
+
+    public Observable<ObjectId> rxLoadMatchedIds(AdvertiseRequestEvent event) {
+        return Observable.defer(() ->
+                Observable.from(loadMatchedIds(event)));
     }
 
     private BasicDBObject createQueryRecordsByIds(List<ObjectId> ids) {

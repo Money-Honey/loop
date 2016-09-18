@@ -3,6 +3,7 @@ package com.loopme.webapp.dao;
 import com.loopme.webapp.model.dto.Advertise;
 import com.loopme.webapp.model.dto.AdvertiseRequestEvent;
 import org.bson.types.ObjectId;
+import rx.Observable;
 
 import java.util.List;
 import java.util.Map;
@@ -12,5 +13,5 @@ import java.util.Map;
  */
 public interface AppDao {
     Map<ObjectId, Advertise> loadRecordsByIdList(List<ObjectId> idList);
-    List<ObjectId> loadMatchedIds(AdvertiseRequestEvent event);
+    Observable<ObjectId> rxLoadMatchedIds(AdvertiseRequestEvent event);
 }
